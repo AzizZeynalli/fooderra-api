@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImF6aXotZm9vZGxvdmVyIiwiaWQiOiI2NTk2ZmQ3NTk1MTlmZWMyMGNjZGVmMTIiLCJpYXQiOjE3MDQzOTQyMzcsImV4cCI6MTcwNDM5NzgzN30.qf7q6IW2FO-q3wrDjU_CQz581olFAuaxazwEMt3b6b4
+
+{
+    "title": "How to gain fat in 10 days",
+    "author": "Aziz Zeynalli",
+    "url": "salam",
+    "likes": 2931
+}
