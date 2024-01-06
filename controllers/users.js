@@ -3,7 +3,7 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.post('/', async (request, response) => {
-    const { username, name, password } = request.body
+    const { username, email, password } = request.body
     if(!(username && password)){
         return response.status(400).json({ error: "both username and password required" })
     }
@@ -19,7 +19,7 @@ usersRouter.post('/', async (request, response) => {
     const passwordHash = await bcrypt.hash(password, saltRounds)
     const user = new User({
         username,
-        name,
+        email,
         passwordHash
     })
     const savedUser = await user.save()
@@ -27,7 +27,7 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.get('/', async (request, response) => {
-    const users = await User.find({}).populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
+    const users = await User.find({}).populate('blogs', { title: 1, likes: 1 })
     response.json(users)
 })
 

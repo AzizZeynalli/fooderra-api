@@ -2,7 +2,7 @@ POST http://localhost:3003/api/users
 content-type: application/json
 
 {
-    "username": "aziz-foodlover",
-    "name": "Aziz Zeynalli",
+    "username": "aziz-foodlovefredwdew",
+    "email": "nnddjk@ewewd.com",
     "password": "aziz2004"
 }

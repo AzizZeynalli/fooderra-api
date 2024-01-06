@@ -1,14 +1,27 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-require('../utils/middleware')
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb){
+    cb(null, 'uploads/')
+  },
+
+  filename: function(req, file, cb){
+    const uniqueSuffix = Date.now();
+    cb(null, uniqueSuffix + file.originalname);
+  }
+})
+
+const upload = multer({ storage: storage });
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+  const blogs = await Blog.find({}).populate('user', { username: 1, email: 1 })
   response.json(blogs)
 })
   
-blogsRouter.post('/', async(request, response) => {
+blogsRouter.post('/', upload.single('image'), async(request, response) => {
   const body = request.body
   const user = request.user
   const token = request.token
@@ -17,9 +30,9 @@ blogsRouter.post('/', async(request, response) => {
   }
   const blog = new Blog({
     title: body.title,
-    author: body.author,
-    url: body.url,
+    content: body.content,
     likes: body.likes || 0,
+    image: request.file.filename, 
     user: user._id
   })
   if(blog.url && blog.title){
@@ -62,19 +75,19 @@ blogsRouter.delete('/', async (request, response, next) => {
   response.status(204).end()
 })
 
-blogsRouter.put('/:id', async(request, response, next) => {
+blogsRouter.put('/:id', upload.single('image'), async(request, response, next) => {
   try{
     const body = request.body
     const newBlog = {
       id: body.id,
       title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes || 0
+      content: body.content,
+      likes: body.likes || 0,
+      image: request.file ? request.file.path : body.image // if a new image file is uploaded, use it, otherwise keep the old image
     }
     if(newBlog.url && newBlog.title){
       const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true })
-                .populate('user', { username: 1, name: 1})
+                .populate('user', { username: 1, email: 1})
       response.status(200).json(updatedBlog)
     }else{
       response.status(400).end()
