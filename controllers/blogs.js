@@ -32,9 +32,10 @@ blogsRouter.post('/', upload.single('image'), async(request, response) => {
     title: body.title,
     content: body.content,
     likes: body.likes || 0,
-    image: request.file.filename, 
+    image: request.file.buffer, 
     user: user._id
   })
+  console.log(request.file.buffer)
   if(blog.url && blog.title){
     const savedBlog = await blog.save()
     await savedBlog.populate('user')
