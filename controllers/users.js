@@ -2,6 +2,21 @@ const bcrypt = require("bcryptjs");
 const usersRouter = require("express").Router();
 const User = require("../models/user");
 
+usersRouter.get("/details", async (request, response) => {
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  response.json({
+    username: user.username,
+    email: user.email,
+    likedRecipes: user.likedRecipes,
+    blogs: user.blogs,
+    token,
+  });
+});
+
 usersRouter.post("/", async (request, response) => {
   const { username, email, password } = request.body;
   if (!(username && password)) {
@@ -40,6 +55,51 @@ usersRouter.get("/", async (request, response) => {
 usersRouter.delete("/", async (request, response) => {
   await User.deleteMany({});
   response.status(204).end();
+});
+
+usersRouter.patch("/like", async (request, response) => {
+  const { mealId } = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  if (user.likedRecipes.length === 0) {
+    user.likedRecipes = [mealId];
+  } else if (!user.likedRecipes.includes(mealId)) {
+    user.likedRecipes = [...user.likedRecipes, mealId];
+  }
+
+  await user.save();
+  response
+    .status(200)
+    .json({
+      username: user.username,
+      email: user.email,
+      likedRecipes: user.likedRecipes,
+      token,
+    });
+});
+
+usersRouter.patch("/removelike", async (request, response) => {
+  const { mealId } = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  if (user.likedRecipes.includes(mealId)) {
+    user.likedRecipes = user.likedRecipes.filter((id) => id !== mealId)
+  }
+  await user.save();
+  response
+    .status(200)
+    .json({
+      username: user.username,
+      email: user.email,
+      likedRecipes: user.likedRecipes,
+      token,
+    });
 });
 
 module.exports = usersRouter;

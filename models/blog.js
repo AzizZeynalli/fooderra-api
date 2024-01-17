@@ -11,6 +11,10 @@ const blogSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  dateCreated: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 blogSchema.set("toJSON", {

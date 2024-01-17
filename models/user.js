@@ -7,7 +7,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    email: String,
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     passwordHash: String,
     blogs: [
         {
@@ -15,6 +19,18 @@ const userSchema = new mongoose.Schema({
             ref: 'Blog'
         }
     ],
+    // avatarImage: {
+    //     type: String,
+    //     required: true
+    // },
+    likedRecipes: [
+    {
+        id: String,
+        title: String,
+        instruction: String,
+        imageUrl: String,
+    }
+    ]
 })
 
 userSchema.plugin(uniqueValidator)
