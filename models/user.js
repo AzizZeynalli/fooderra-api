@@ -24,12 +24,12 @@ const userSchema = new mongoose.Schema({
     //     required: true
     // },
     likedRecipes: [
-    {
-        id: String,
-        title: String,
-        instruction: String,
-        imageUrl: String,
-    }
+        {
+            idMeal: string,
+            strMeal: string,
+            strMealThumb: string,
+            strInstructions: string,
+        }
     ]
 })
 
