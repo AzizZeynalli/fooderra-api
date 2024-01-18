@@ -58,16 +58,16 @@ usersRouter.delete("/", async (request, response) => {
 });
 
 usersRouter.patch("/like", async (request, response) => {
-  const { mealId } = request.body;
+  const { meal } = request.body;
   const user = request.user;
   const token = request.token;
   if (!(token && user)) {
     return response.status(401).json({ error: "token invalid" });
   }
   if (user.likedRecipes.length === 0) {
-    user.likedRecipes = [mealId];
-  } else if (!user.likedRecipes.includes(mealId)) {
-    user.likedRecipes = [...user.likedRecipes, mealId];
+    user.likedRecipes.push(meal);
+  } else if (!user.likedRecipes.some((likedRecipe) => likedRecipe.idMeal === meal.mealId)) {
+    user.likedRecipes = [...user.likedRecipes, meal];
   }
 
   await user.save();
@@ -81,25 +81,25 @@ usersRouter.patch("/like", async (request, response) => {
     });
 });
 
-usersRouter.patch("/removelike", async (request, response) => {
-  const { mealId } = request.body;
-  const user = request.user;
-  const token = request.token;
-  if (!(token && user)) {
-    return response.status(401).json({ error: "token invalid" });
-  }
-  if (user.likedRecipes.includes(mealId)) {
-    user.likedRecipes = user.likedRecipes.filter((id) => id !== mealId)
-  }
-  await user.save();
-  response
-    .status(200)
-    .json({
-      username: user.username,
-      email: user.email,
-      likedRecipes: user.likedRecipes,
-      token,
-    });
-});
+// usersRouter.patch("/removelike", async (request, response) => {
+//   const { mealId } = request.body;
+//   const user = request.user;
+//   const token = request.token;
+//   if (!(token && user)) {
+//     return response.status(401).json({ error: "token invalid" });
+//   }
+//   if (user.likedRecipes.includes(mealId)) {
+//     user.likedRecipes = user.likedRecipes.filter((id) => id !== mealId)
+//   }
+//   await user.save();
+//   response
+//     .status(200)
+//     .json({
+//       username: user.username,
+//       email: user.email,
+//       likedRecipes: user.likedRecipes,
+//       token,
+//     });
+// });
 
 module.exports = usersRouter;
