@@ -25,10 +25,10 @@ const userSchema = new mongoose.Schema({
     // },
     likedRecipes: [
         {
-            idMeal: string,
-            strMeal: string,
-            strMealThumb: string,
-            strInstructions: string,
+            idMeal: String,
+            strMeal: String,
+            strMealThumb: String,
+            strInstructions: String,
         }
     ]
 })
