@@ -1,18 +1,16 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const blog = require("../models/blog");
 
-const upload = multer();
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, email: 1 });
   response.json(blogs);
 });
 
-blogsRouter.post("/", upload.single("image"), async (request, response) => {
+blogsRouter.post("/", async (request, response) => {
   const body = request.body
   const user = request.user
   const token = request.token
@@ -23,7 +21,7 @@ blogsRouter.post("/", upload.single("image"), async (request, response) => {
     title: body.title,
     content: body.content,
     likes: body.likes || 0,
-    image: request.file.buffer.toString("base64"),
+    imageUrl: body.imageUrl,
     user: user._id,
     dateCreated: new Date(),
   });

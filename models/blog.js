@@ -5,7 +5,7 @@ const model = mongoose.model;
 const blogSchema = new Schema({
   title: String,
   content: String,
-  image: String,
+  imageUrl: String,
   likes: Number,
   user: {
     type: Schema.Types.ObjectId,
