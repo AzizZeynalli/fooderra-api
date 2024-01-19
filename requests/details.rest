@@ -1,0 +1,3 @@
+GET https://fooderra-api.vercel.app/api/users/details
+Content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im11cmFkNTU1QGdtYWlsLmNvbSIsImlkIjoiNjVhOWEyMWRhNDdmYjU3NDhlZWQyMjNlIiwiaWF0IjoxNzA1NjgyNjA2LCJleHAiOjE3MDU2ODYyMDZ9.eb2OJmpEGpFjgTa9p5gOBCy5B6N07VwdrRtDg570-og

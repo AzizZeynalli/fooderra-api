@@ -8,12 +8,15 @@ usersRouter.get("/details", async (request, response) => {
   if (!(token && user)) {
     return response.status(401).json({ error: "token invalid" });
   }
+
+  const populatedUser = await User.findById(user._id).populate("blogs", { title: 1, content: 1, imageUrl :1, likes: 1 });
+
   response.json({
-    username: user.username,
-    email: user.email,
-    likedRecipes: user.likedRecipes,
+    username: populatedUser.username,
+    email: populatedUser.email,
+    likedRecipes: populatedUser.likedRecipes,
     token,
-  }.populate("blogs", { title: 1, content: 1, imageUrl :1, likes: 1 }));
+  });
 });
 
 usersRouter.post("/", async (request, response) => {

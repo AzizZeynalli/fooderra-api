@@ -1,7 +1,7 @@
-POST http://localhost:3003/api/login
+POST https://fooderra-api.vercel.app/api/login
 content-type: application/json
 
 {
-    "email": "az.zeynalli@gmail.com",
-    "password": "aziz2004"
+    "email": "murad555@gmail.com",
+    "password": "Murad2003"
 }
