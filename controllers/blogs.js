@@ -69,7 +69,6 @@ blogsRouter.delete("/", async (request, response, next) => {
 
 blogsRouter.put(
   "/:id",
-  upload.single("image"),
   async (request, response, next) => {
     try {
       const body = request.body;
@@ -78,9 +77,9 @@ blogsRouter.put(
         title: body.title,
         content: body.content,
         likes: body.likes || 0,
-        image: request.file ? request.file.buffer.toString("base64") : body.image, // if a new image file is uploaded, use it, otherwise keep the old image
+        imageUrl: body.imageUrl // if a new image file is uploaded, use it, otherwise keep the old image
       };
-      if (newBlog.url && newBlog.title) {
+      if (newBlog.title) {
         const updatedBlog = await Blog.findByIdAndUpdate(
           request.params.id,
           newBlog,
