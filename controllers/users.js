@@ -82,25 +82,25 @@ usersRouter.patch("/like", async (request, response) => {
     });
 });
 
-// usersRouter.patch("/removelike", async (request, response) => {
-//   const { mealId } = request.body;
-//   const user = request.user;
-//   const token = request.token;
-//   if (!(token && user)) {
-//     return response.status(401).json({ error: "token invalid" });
-//   }
-//   if (user.likedRecipes.includes(mealId)) {
-//     user.likedRecipes = user.likedRecipes.filter((id) => id !== mealId)
-//   }
-//   await user.save();
-//   response
-//     .status(200)
-//     .json({
-//       username: user.username,
-//       email: user.email,
-//       likedRecipes: user.likedRecipes,
-//       token,
-//     });
-// });
+usersRouter.patch("/removelike", async (request, response) => {
+  const { mealId } = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  if (user.likedRecipes.some((recipe) => recipe.idMeal === mealId)) {
+    user.likedRecipes = user.likedRecipes.filter((recipe) => recipe.idMeal !== mealId);
+  }
+  await user.save();
+  response
+    .status(200)
+    .json({
+      username: user.username,
+      email: user.email,
+      likedRecipes: user.likedRecipes,
+      token,
+    });
+});
 
 module.exports = usersRouter;
