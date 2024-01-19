@@ -12,9 +12,8 @@ usersRouter.get("/details", async (request, response) => {
     username: user.username,
     email: user.email,
     likedRecipes: user.likedRecipes,
-    blogs: user.blogs,
     token,
-  });
+  }.populate("blogs", { title: 1, content: 1, imageUrl :1, likes: 1 }));
 });
 
 usersRouter.post("/", async (request, response) => {
