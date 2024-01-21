@@ -106,4 +106,25 @@ usersRouter.patch("/removelike", async (request, response) => {
     });
 });
 
+usersRouter.patch("/resetpassword", async (request, response) => {
+  const { password } = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(password, saltRounds);
+  user.passwordHash = passwordHash;
+  await user.save();
+  response
+    .status(200)
+    .json({
+      username: user.username,
+      email: user.email,
+      likedRecipes: user.likedRecipes,
+      token,
+    });
+});
+
 module.exports = usersRouter;
