@@ -120,14 +120,24 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id);
     const user = request.user;
+
     if (!user) {
       return response.status(401).json({ error: "token invalid" });
     }
+
     if (blog && !blog.whoLiked.includes(user.id)) {
-      blog.likes += 1;
-      blog.whoLiked = [...blog.whoLiked, user.id];
-      await blog.save();
-      response.status(200).json(blog);
+      // Use $addToSet to add the user ID to the whoLiked array only if it's not already there
+      // Use $inc to increment the likes count
+      const updatedBlog = await Blog.findByIdAndUpdate(
+        request.params.id,
+        {
+          $addToSet: { whoLiked: user.id },
+          $inc: { likes: 1 },
+        },
+        { new: true } // Return the updated document
+      ).populate("user", { username: 1, email: 1, avatar: 1 });
+
+      response.status(200).json(updatedBlog);
     } else {
       response.status(404).end();
     }
@@ -136,18 +146,29 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
   }
 });
 
+
 blogsRouter.patch("/:id/removelike", async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id);
     const user = request.user;
+
     if (!user) {
       response.status(401).json({ error: "token invalid" });
     }
+
     if (blog && blog.whoLiked.includes(user.id)) {
-      blog.likes -= 1;
-      blog.whoLiked = blog.whoLiked.filter((id) => id !== user.id);
-      await blog.save();
-      response.status(200).json(blog);
+      // Use $pull to remove the user ID from the whoLiked array
+      // Use $inc to decrement the likes count
+      const updatedBlog = await Blog.findByIdAndUpdate(
+        request.params.id,
+        {
+          $pull: { whoLiked: user.id },
+          $inc: { likes: -1 },
+        },
+        { new: true } // Return the updated document
+      ).populate("user", { username: 1, email: 1, avatar: 1 });
+
+      response.status(200).json(updatedBlog);
     } else {
       response.status(404).end();
     }
@@ -155,5 +176,6 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
     next(exception);
   }
 });
+
 
 module.exports = blogsRouter;
