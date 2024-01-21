@@ -35,28 +35,14 @@ blogsRouter.post("/", async (request, response) => {
   }
 });
 
-blogsRouter.patch("/:id/like", async (request, response, next) => {
+blogsRouter.get("/:id", async (request, response, next) => {
   try {
-    const blog = await Blog.findById(request.params.id);
-    const user = request.user;
+    const blog = await Blog.findById(request.params.id)
+      .populate("user", { username: 1, email: 1, avatar: 1 })
+      .populate("whoLiked", { username: 1, avatar: 1 });
 
-    if (!user) {
-      return response.status(401).json({ error: "token invalid" });
-    }
-
-    if (blog && !blog.whoLiked.includes(user.id)) {
-      // Use $addToSet to add the user ID to the whoLiked array only if it's not already there
-      // Use $inc to increment the likes count
-      const updatedBlog = await Blog.findByIdAndUpdate(
-        request.params.id,
-        {
-          $addToSet: { whoLiked: user.id },
-          $inc: { likes: 1 },
-        },
-        { new: true } // Return the updated document
-      ).populate("user", { username: 1, email: 1, avatar: 1 });
-
-      response.status(200).json(updatedBlog);
+    if (blog) {
+      response.status(200).json(blog);
     } else {
       response.status(404).end();
     }
