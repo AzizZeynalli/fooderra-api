@@ -6,8 +6,7 @@ const User = require("../models/user");
 loginRouter.post("/", async (request, response) => {
   const { email, password } = request.body;
 
-  const user = await User.findOne({ email });
-  console.log(email, password, user);
+  let user = await User.findOne({ email });
   const passwordCorrect =
     user === null ? false : await bcrypt.compare(password, user.passwordHash);
 
@@ -16,6 +15,10 @@ loginRouter.post("/", async (request, response) => {
       error: "invalid email or password",
     });
   }
+
+  user = await user
+    .populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 })
+    .execPopulate();
 
   const userForToken = {
     email: user.email,
@@ -28,8 +31,6 @@ loginRouter.post("/", async (request, response) => {
 
   response
     .status(200)
-    .send({ token, username: user.username, email: user.email, likedRecipes: user.likedRecipes, blogs: user.blogs, likedBlogs: user.likedBlogs })
-    .populate("blogs", { title: 1, content: 1, imageUrl :1, likes: 1 });
+    .send({ token, username: user.username, email: user.email, likedRecipes: user.likedRecipes, blogs: user.blogs, likedBlogs: user.likedBlogs });
 });
-
 module.exports = loginRouter;
