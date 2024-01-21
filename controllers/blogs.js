@@ -111,7 +111,7 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
       return response.status(401).json({ error: "token invalid" });
     }
 
-    if (blog && !blog.whoLiked.includes(user.id)) {
+    if (blog && !blog.whoLiked.some(likedUserId => likedUserId.toString() === user.id)){
       // Use $addToSet to add the user ID to the whoLiked array only if it's not already there
       // Use $inc to increment the likes count
       const updatedBlog = await Blog.findByIdAndUpdate(
@@ -142,7 +142,7 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
       response.status(401).json({ error: "token invalid" });
     }
 
-    if (blog && blog.whoLiked.includes(user.id)) {
+    if (blog && blog.whoLiked.some(someuser => someuser.id === user.id)) {
       // Use $pull to remove the user ID from the whoLiked array
       // Use $inc to decrement the likes count
       const updatedBlog = await Blog.findByIdAndUpdate(

@@ -28,7 +28,8 @@ loginRouter.post("/", async (request, response) => {
 
   response
     .status(200)
-    .send({ token, username: user.username, email: user.email });
+    .send({ token, username: user.username, email: user.email, likedRecipes: user.likedRecipes, blogs: user.blogs, likedBlogs: user.likedBlogs })
+    .populate("blogs", { title: 1, content: 1, imageUrl :1, likes: 1 });
 });
 
 module.exports = loginRouter;
