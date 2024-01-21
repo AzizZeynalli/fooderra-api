@@ -114,4 +114,24 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
   }
 });
 
+blogsRouter.patch("/:id/removelike", async (request, response, next) => {
+  try {
+    const blog = await Blog.findById(request.params.id);
+    const user = request.user;
+    if (!user) {
+      response.status(401).json({ error: "token invalid" });
+    }
+    if (blog && blog.whoLiked.includes(user.id)) {
+      blog.likes -= 1;
+      blog.whoLiked = blog.whoLiked.filter((id) => id !== user.id);
+      await blog.save();
+      response.status(200).json(blog);
+    } else {
+      response.status(404).end();
+    }
+  } catch (exception) {
+    next(exception);
+  }
+});
+
 module.exports = blogsRouter;
