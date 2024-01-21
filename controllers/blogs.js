@@ -97,8 +97,13 @@ blogsRouter.put(
 blogsRouter.patch("/:id/like", async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id);
-    if (blog) {
+    const user = request.user;
+    if (!user) {
+      response.status(401).json({ error: "token invalid" });
+    }
+    if (blog && !blog.whoLiked.includes(user.id)) {
       blog.likes += 1;
+      blog.whoLiked = [...blog.whoLiked, user.id];
       await blog.save();
       response.status(200).json(blog);
     } else {

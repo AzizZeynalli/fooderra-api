@@ -15,6 +15,12 @@ const blogSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  whoLiked: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 blogSchema.set("toJSON", {
