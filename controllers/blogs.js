@@ -36,12 +36,25 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.get("/:id", async (request, response, next) => {
-  const blog = await Blog.findById(request.params.id).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
-  if (blog) {
-    response.json(blog);
-  } else {
-    response.status(404).end();
-  }
+  try {
+    const blog = await Blog.findById(request.params.id)
+      .populate({
+        path: "user",
+        select: "username email avatar",
+      })
+      .populate({
+        path: "whoLiked",
+        select: "username avatar",
+      });
+
+    if (blog) {
+      response.json(blog);
+    } else {
+      response.status(404).json({ error: 'Blog not found' });
+    }
+  } catch (error) {
+    
+    next(error); 
 });
 
 blogsRouter.delete("/:id", async (request, response, next) => {
