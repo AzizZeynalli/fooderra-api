@@ -18,7 +18,6 @@ loginRouter.post("/", async (request, response) => {
 
   user = await user
     .populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 })
-    .execPopulate();
 
   const userForToken = {
     email: user.email,
