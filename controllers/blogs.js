@@ -135,7 +135,7 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
           $inc: { likes: 1 },
         },
         { new: true } // Return the updated document
-      ).populate("user", { username: 1, email: 1, avatar: 1 });
+      ).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
 
       response.status(200).json(updatedBlog);
     } else {
@@ -166,7 +166,7 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
           $inc: { likes: -1 },
         },
         { new: true } // Return the updated document
-      ).populate("user", { username: 1, email: 1, avatar: 1 });
+      ).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
 
       response.status(200).json(updatedBlog);
     } else {
