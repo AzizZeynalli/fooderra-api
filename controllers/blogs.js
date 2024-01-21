@@ -55,7 +55,7 @@ blogsRouter.get("/:id", async (request, response, next) => {
   } catch (error) {
     
     next(error); 
-});
+}});
 
 blogsRouter.delete("/:id", async (request, response, next) => {
   const user = request.user;
