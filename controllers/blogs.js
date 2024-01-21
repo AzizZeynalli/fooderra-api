@@ -76,7 +76,7 @@ blogsRouter.put(
         title: body.title,
         content: body.content,
         likes: body.likes || 0,
-        imageUrl: body.imageUrl // if a new image file is uploaded, use it, otherwise keep the old image
+        imageUrl: body.imageUrl 
       };
       if (newBlog.title) {
         const updatedBlog = await Blog.findByIdAndUpdate(
@@ -99,7 +99,7 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
     const blog = await Blog.findById(request.params.id);
     const user = request.user;
     if (!user) {
-      response.status(401).json({ error: "token invalid" });
+      return response.status(401).json({ error: "token invalid" });
     }
     if (blog && !blog.whoLiked.includes(user.id)) {
       blog.likes += 1;
