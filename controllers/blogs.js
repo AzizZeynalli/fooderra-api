@@ -104,9 +104,7 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
     if (blog && !blog.whoLiked.includes(user.id)) {
       blog.likes += 1;
       blog.whoLiked = [...blog.whoLiked, user.id];
-      user.likedBlogs = [...user.likedBlogs, blog.id];
       await blog.save();
-      await user.save();
       response.status(200).json(blog);
     } else {
       response.status(404).end();
@@ -126,9 +124,7 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
     if (blog && blog.whoLiked.includes(user.id)) {
       blog.likes -= 1;
       blog.whoLiked = blog.whoLiked.filter((id) => id !== user.id);
-      user.likedBlogs = user.likedBlogs.filter((id) => id !== blog.id);
       await blog.save();
-      await user.save();
       response.status(200).json(blog);
     } else {
       response.status(404).end();

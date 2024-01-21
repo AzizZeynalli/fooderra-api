@@ -2,6 +2,6 @@ POST https://fooderra-api.vercel.app/api/login
 content-type: application/json
 
 {
-    "email": "murad555@gmail.com",
-    "password": "Murad2003"
+    "email": "test@gmail.com",
+    "password": "Test2024"
 }
