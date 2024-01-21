@@ -36,7 +36,7 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.get("/:id", async (request, response, next) => {
-  const blog = await Blog.findById(request.params.id).populate("user", { username: 1, email: 1, avatar: 1 });
+  const blog = await Blog.findById(request.params.id).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });;
   if (blog) {
     response.json(blog);
   } else {
