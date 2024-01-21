@@ -30,7 +30,13 @@ const userSchema = new mongoose.Schema({
             strMealThumb: String,
             strInstructions: String,
         }
-    ]
+    ],
+    likedBlogs: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Blog'
+        }
+    ],
 })
 
 userSchema.plugin(uniqueValidator)

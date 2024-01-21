@@ -16,6 +16,7 @@ usersRouter.get("/details", async (request, response) => {
     email: populatedUser.email,
     likedRecipes: populatedUser.likedRecipes,
     blogs: populatedUser.blogs,
+    likedBlogs: populatedUser.likedBlogs,
     token,
   });
 });
