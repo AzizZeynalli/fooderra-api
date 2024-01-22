@@ -5,16 +5,18 @@ const jwt = require("jsonwebtoken");
 const blog = require("../models/blog");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user", { username: 1, email: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
+  const blogs = await Blog.find({})
+    .populate("user", { username: 1, email: 1 })
+    .populate("whoLiked", { username: 1, avatar: 1 });
   response.json(blogs);
 });
 
 blogsRouter.post("/", async (request, response) => {
-  const body = request.body
-  const user = request.user
-  const token = request.token
-  if(!(token && user)){
-    return response.status(401).json({ error: 'token invalid' })
+  const body = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
   }
   const blog = new Blog({
     title: body.title,
@@ -51,7 +53,6 @@ blogsRouter.get("/:id", async (request, response, next) => {
   }
 });
 
-
 blogsRouter.delete("/:id", async (request, response, next) => {
   const user = request.user;
   const token = request.token;
@@ -74,33 +75,30 @@ blogsRouter.delete("/", async (request, response, next) => {
   response.status(204).end();
 });
 
-blogsRouter.put(
-  "/:id",
-  async (request, response, next) => {
-    try {
-      const body = request.body;
-      const newBlog = {
-        id: body.id,
-        title: body.title,
-        content: body.content,
-        likes: body.likes || 0,
-        imageUrl: body.imageUrl 
-      };
-      if (newBlog.title) {
-        const updatedBlog = await Blog.findByIdAndUpdate(
-          request.params.id,
-          newBlog,
-          { new: true }
-        ).populate("user", { username: 1, email: 1 });
-        response.status(200).json(updatedBlog);
-      } else {
-        response.status(400).end();
-      }
-    } catch (exception) {
-      next(exception);
+blogsRouter.put("/:id", async (request, response, next) => {
+  try {
+    const body = request.body;
+    const newBlog = {
+      id: body.id,
+      title: body.title,
+      content: body.content,
+      likes: body.likes || 0,
+      imageUrl: body.imageUrl,
+    };
+    if (newBlog.title) {
+      const updatedBlog = await Blog.findByIdAndUpdate(
+        request.params.id,
+        newBlog,
+        { new: true }
+      ).populate("user", { username: 1, email: 1 });
+      response.status(200).json(updatedBlog);
+    } else {
+      response.status(400).end();
     }
+  } catch (exception) {
+    next(exception);
   }
-);
+});
 
 blogsRouter.patch("/:id/like", async (request, response, next) => {
   try {
@@ -111,17 +109,21 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
       return response.status(401).json({ error: "token invalid" });
     }
 
-    if (blog && !blog.whoLiked.some(likedUserId => likedUserId.toString() === user.id)){
-      // Use $addToSet to add the user ID to the whoLiked array only if it's not already there
-      // Use $inc to increment the likes count
+    if (
+      blog &&
+      !blog.whoLiked.some((likedUserId) => likedUserId.toString() === user.id)
+    ) {
+
       const updatedBlog = await Blog.findByIdAndUpdate(
         request.params.id,
         {
           $addToSet: { whoLiked: user.id },
           $inc: { likes: 1 },
         },
-        { new: true } // Return the updated document
-      ).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
+        { new: true } 
+      )
+        .populate("user", { username: 1, email: 1, avatar: 1 })
+        .populate("whoLiked", { username: 1, avatar: 1 });
 
       response.status(200).json(updatedBlog);
     } else {
@@ -132,27 +134,35 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
   }
 });
 
-
 blogsRouter.patch("/:id/removelike", async (request, response, next) => {
   try {
+
     const blog = await Blog.findById(request.params.id);
     const user = request.user;
+
 
     if (!user) {
       response.status(401).json({ error: "token invalid" });
     }
+  
 
-    if (blog && blog.whoLiked.some(someuser => someuser.id === user.id)) {
-      // Use $pull to remove the user ID from the whoLiked array
-      // Use $inc to decrement the likes count
+    if (
+      blog &&
+      blog.whoLiked.some(
+        (someuser) => someuser.toString() === user._id.toString()
+      )
+    ) {
+
       const updatedBlog = await Blog.findByIdAndUpdate(
         request.params.id,
         {
           $pull: { whoLiked: user.id },
           $inc: { likes: -1 },
         },
-        { new: true } // Return the updated document
-      ).populate("user", { username: 1, email: 1, avatar: 1 }).populate("whoLiked", { username: 1, avatar: 1 });
+        { new: true } 
+      )
+        .populate("user", { username: 1, email: 1, avatar: 1 })
+        .populate("whoLiked", { username: 1, avatar: 1 });
 
       response.status(200).json(updatedBlog);
     } else {
@@ -162,6 +172,5 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
     next(exception);
   }
 });
-
 
 module.exports = blogsRouter;

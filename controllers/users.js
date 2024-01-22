@@ -76,13 +76,15 @@ usersRouter.patch("/like", async (request, response) => {
     user.likedRecipes = [...user.likedRecipes, meal];
   }
 
-  await user.save();
+  const populatedUser = await User.findById(user._id).populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 });
+
   response
     .status(200)
     .json({
-      username: user.username,
-      email: user.email,
-      likedRecipes: user.likedRecipes,
+      username: populatedUser.username,
+      email: populatedUser.email,
+      likedRecipes: populatedUser.likedRecipes,
+      blogs: populatedUser.blogs,
       token,
     });
 });
@@ -98,12 +100,15 @@ usersRouter.patch("/removelike", async (request, response) => {
     user.likedRecipes = user.likedRecipes.filter((recipe) => recipe.idMeal !== mealId);
   }
   await user.save();
+  const populatedUser = await User.findById(user._id).populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 });
+
   response
     .status(200)
     .json({
-      username: user.username,
-      email: user.email,
-      likedRecipes: user.likedRecipes,
+      username: populatedUser.username,
+      email: populatedUser.email,
+      likedRecipes: populatedUser.likedRecipes,
+      blogs: populatedUser.blogs,
       token,
     });
 });
