@@ -14,6 +14,7 @@ usersRouter.get("/details", async (request, response) => {
   response.json({
     username: populatedUser.username,
     email: populatedUser.email,
+    avatarImage: populatedUser.avatarImage,
     likedRecipes: populatedUser.likedRecipes,
     blogs: populatedUser.blogs,
     likedBlogs: populatedUser.likedBlogs,
@@ -46,6 +47,7 @@ usersRouter.post("/", async (request, response) => {
     username,
     email,
     passwordHash,
+    avatarImage: "",
     likedRecipes: [],
     blogs: [],
   });
@@ -82,6 +84,7 @@ usersRouter.patch("/like", async (request, response) => {
     .status(200)
     .json({
       username: populatedUser.username,
+      avatarImage: populatedUser.avatarImage,
       email: populatedUser.email,
       likedRecipes: populatedUser.likedRecipes,
       blogs: populatedUser.blogs,
@@ -106,6 +109,7 @@ usersRouter.patch("/removelike", async (request, response) => {
     .status(200)
     .json({
       username: populatedUser.username,
+      avatarImage: populatedUser.avatarImage,
       email: populatedUser.email,
       likedRecipes: populatedUser.likedRecipes,
       blogs: populatedUser.blogs,
@@ -131,13 +135,14 @@ usersRouter.patch("/updateProfileImage", async (request, response) => {
   if (!(token && user)) {
     return response.status(401).json({ error: "token invalid" });
   }
-  user.imageUrl = imageUrl;
+  user.avatarImage = imageUrl;
   await user.save();
   const populatedUser = await User.findById(user._id).populate('blogs', { id: 1, title: 1, content: 1, imageUrl: 1, likes: 1, dateCreated: 1});
   response
     .status(200)
     .json({
       username: populatedUser.username,
+      avatarImage: populatedUser.avatarImage,
       email: populatedUser.email,
       likedRecipes: populatedUser.likedRecipes,
       blogs: populatedUser.blogs,

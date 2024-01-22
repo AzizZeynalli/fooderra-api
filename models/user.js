@@ -19,10 +19,7 @@ const userSchema = new mongoose.Schema({
             ref: 'Blog'
         }
     ],
-    // avatarImage: {
-    //     type: String,
-    //     required: true
-    // },
+    avatarImage: String,
     likedRecipes: [
         {
             idMeal: String,

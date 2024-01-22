@@ -40,7 +40,7 @@ blogsRouter.post("/", async (request, response) => {
 blogsRouter.get("/:id", async (request, response, next) => {
   try {
     const blog = await Blog.findById(request.params.id)
-      .populate("user", { username: 1, email: 1, avatar: 1 })
+      .populate("user", { username: 1, email: 1, avatarImage: 1 })
       .populate("whoLiked", { username: 1, avatar: 1 });
 
     if (blog) {
@@ -90,7 +90,7 @@ blogsRouter.put("/:id", async (request, response, next) => {
         request.params.id,
         newBlog,
         { new: true }
-      ).populate("user", { username: 1, email: 1 });
+      ).populate("user", { username: 1, email: 1, avatarImage: 1 });
       response.status(200).json(updatedBlog);
     } else {
       response.status(400).end();
@@ -122,7 +122,7 @@ blogsRouter.patch("/:id/like", async (request, response, next) => {
         },
         { new: true } 
       )
-        .populate("user", { username: 1, email: 1, avatar: 1 })
+        .populate("user", { username: 1, email: 1, avatarImage: 1 })
         .populate("whoLiked", { username: 1, avatar: 1 });
 
       response.status(200).json(updatedBlog);
@@ -161,8 +161,8 @@ blogsRouter.patch("/:id/removelike", async (request, response, next) => {
         },
         { new: true } 
       )
-        .populate("user", { username: 1, email: 1, avatar: 1 })
-        .populate("whoLiked", { username: 1, avatar: 1 });
+        .populate("user", { username: 1, email: 1, avatarImage: 1 })
+        .populate("whoLiked", { username: 1, avatarImage: 1 });
 
       response.status(200).json(updatedBlog);
     } else {
