@@ -75,7 +75,7 @@ usersRouter.patch("/like", async (request, response) => {
   } else if (!user.likedRecipes.some((likedRecipe) => likedRecipe.idMeal === meal.mealId)) {
     user.likedRecipes = [...user.likedRecipes, meal];
   }
-
+  await user.save();
   const populatedUser = await User.findById(user._id).populate('blogs', { id: 1, title: 1, content: 1, imageUrl: 1, likes: 1, dateCreated: 1});
 
   response
