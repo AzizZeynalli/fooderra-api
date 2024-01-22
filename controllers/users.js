@@ -76,7 +76,7 @@ usersRouter.patch("/like", async (request, response) => {
     user.likedRecipes = [...user.likedRecipes, meal];
   }
 
-  const populatedUser = await User.findById(user._id).populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 });
+  const populatedUser = await User.findById(user._id).populate('blogs', { id: 1, title: 1, content: 1, imageUrl: 1, likes: 1, dateCreated: 1});
 
   response
     .status(200)
@@ -100,7 +100,7 @@ usersRouter.patch("/removelike", async (request, response) => {
     user.likedRecipes = user.likedRecipes.filter((recipe) => recipe.idMeal !== mealId);
   }
   await user.save();
-  const populatedUser = await User.findById(user._id).populate('blogs', { title: 1, content: 1, imageUrl: 1, likes: 1 });
+  const populatedUser = await User.findById(user._id).populate('blogs', { id: 1, title: 1, content: 1, imageUrl: 1, likes: 1, dateCreated: 1});
 
   response
     .status(200)
