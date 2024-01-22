@@ -9,7 +9,7 @@ usersRouter.get("/details", async (request, response) => {
     return response.status(401).json({ error: "token invalid" });
   }
 
-  const populatedUser = await User.findById(user._id).populate("blogs", { id: 1, title: 1, content: 1, imageUrl :1, likes: 1 });
+  const populatedUser = await User.findById(user._id).populate("blogs", { id: 1, title: 1, content: 1, imageUrl :1, likes: 1, createdAt: 1 });
 
   response.json({
     username: populatedUser.username,
