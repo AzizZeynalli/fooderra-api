@@ -115,6 +115,7 @@ usersRouter.patch("/removelike", async (request, response) => {
 
 usersRouter.patch("/resetpassword", async (request, response) => {
   const { email, password } = request.body;
+  console.log(email, password)
   const user = await User.findOne({ email });
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -122,5 +123,26 @@ usersRouter.patch("/resetpassword", async (request, response) => {
   await user.save();
   response.status(200).end();
 });
+
+usersRouter.patch("/updateProfileImage", async (request, response) => {
+  const { imageUrl } = request.body;
+  const user = request.user;
+  const token = request.token;
+  if (!(token && user)) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  user.imageUrl = imageUrl;
+  await user.save();
+  const populatedUser = await User.findById(user._id).populate('blogs', { id: 1, title: 1, content: 1, imageUrl: 1, likes: 1, dateCreated: 1});
+  response
+    .status(200)
+    .json({
+      username: populatedUser.username,
+      email: populatedUser.email,
+      likedRecipes: populatedUser.likedRecipes,
+      blogs: populatedUser.blogs,
+      token,
+    });
+})
 
 module.exports = usersRouter;
